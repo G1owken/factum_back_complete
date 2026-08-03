@@ -1,0 +1,11 @@
+.env
+
+/vendor/
+
+/.idea/
+/.vscode/
+
+logs/
+*.log
+
+orders/*.txt
