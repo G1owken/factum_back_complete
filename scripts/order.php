@@ -8,7 +8,7 @@ use PHPMailer\PHPMailer\Exception;
 header("Content-Type: application/json; charset=utf-8");
 
 
-function errorResponse($message, $status = 400)
+function errorResponse(mixed $message, $status = 400)
 {
     http_response_code($status);
 
@@ -319,7 +319,7 @@ try {
 
 
 
-    $mail->Subject = "Заказ оформлен";
+    $mail->Subject = "Заказ на Books store оформлен";
 
 
 
