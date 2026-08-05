@@ -9,11 +9,11 @@ create table book (
     title varchar(200) not null,
     release_year smallint unsigned,
     cover_path varchar(255) not null,
-    open_library_key varchar(100) NOT NULL,
-    price DECIMAL(10,2) NOT NULL DEFAULT 0,
+    open_library_key varchar(100) not null,
+    price decimal(10,2) not null default 0,
     description text not null,
     constraint pk_book_id primary key (book_id),
-    constraint uq_open_library_key unique(open_library_key)
+    constraint uq_open_library_key unique (open_library_key)
 );
 
 create table genre (
@@ -60,37 +60,54 @@ create table book_author (
         on update cascade
 );
 
-CREATE TABLE stock (
-    stock_id INT AUTO_INCREMENT PRIMARY KEY,
-    book_id INT NOT NULL,
-    amount INT UNSIGNED NOT NULL DEFAULT 0,
-
-    CONSTRAINT uq_stock_book UNIQUE(book_id),
-
-    FOREIGN KEY (book_id)
-        REFERENCES book(book_id)
-        ON DELETE CASCADE
+create table stock (
+    stock_id int auto_increment,
+    book_id int not null,
+    amount int unsigned not null default 0,
+    constraint pk_stock_id primary key (stock_id),
+    constraint uq_stock_book unique (book_id),
+    constraint fk_stock_book_id foreign key (book_id)
+        references book (book_id)
+        on delete cascade
+        on update cascade
 );
 
-CREATE TABLE orders (
-    order_id INT AUTO_INCREMENT PRIMARY KEY,
-    order_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    book_id INT NOT NULL,
-
-    firstname VARCHAR(100) NOT NULL,
-    surname VARCHAR(100) NOT NULL,
-    fathername VARCHAR(100),
-
-    phone VARCHAR(30) NOT NULL,
-    email VARCHAR(150) NOT NULL,
-
-    city VARCHAR(100) NOT NULL,
-    postal_code VARCHAR(10) NOT NULL,
-    address VARCHAR(255) NOT NULL,
-
-    FOREIGN KEY(book_id)
-    REFERENCES book(book_id)
-    ON DELETE RESTRICT
+create table user (
+    user_id int auto_increment,
+    username varchar(100) not null,
+    password_hash varchar(255) not null,
+    email varchar(150) not null,
+    created_at datetime not null default current_timestamp,
+    constraint pk_user_id primary key (user_id),
+    constraint uq_username unique (username),
+    constraint uq_user_email unique (email)
 );
 
+create table orders (
+    order_id int auto_increment,
+    order_date datetime not null default current_timestamp,
+    user_id int not null,
+    book_id int not null,
 
+    firstname varchar(100) not null,
+    surname varchar(100) not null,
+    fathername varchar(100),
+
+    phone varchar(30) not null,
+
+    city varchar(100) not null,
+    postal_code varchar(10) not null,
+    address varchar(255) not null,
+
+    constraint pk_order_id primary key (order_id),
+
+    constraint fk_order_user_id foreign key (user_id)
+        references user (user_id)
+        on delete restrict
+        on update cascade,
+
+    constraint fk_order_book_id foreign key (book_id)
+        references book (book_id)
+        on delete restrict
+        on update cascade
+);

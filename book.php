@@ -65,7 +65,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute([$id]);
 
 
-$book = $stmt->fetch(PDO::FETCH_ASSOC);
+$book = $stmt->fetchAll();
 
 
 
@@ -135,7 +135,7 @@ width="200"
 
 <p>
 Цена:
-<?= htmlspecialchars($book["price"]) ?> ₸
+<?= htmlspecialchars($book["price"]) ?> тенге
 </p>
 
 
@@ -230,17 +230,6 @@ required
 >
 
 
-
-<p>Email</p>
-
-<input
-type="email"
-name="email"
-required
->
-
-
-
 <p>Город</p>
 
 <input
@@ -302,7 +291,7 @@ required
 <br><br>
 
 
-<a href="index.php">
+<a href="./scripts/catalogue.php">
 Назад
 </a>
 
@@ -311,26 +300,6 @@ required
 <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1/dist/fancybox/fancybox.umd.js"></script>
 
 <script src="https://unpkg.com/imask"></script>
-
-<script>
-
-Fancybox.bind("[data-fancybox]", {});
-
-
-const phone = document.getElementById("phone");
-
-
-if(phone){
-
-    IMask(phone,{
-        mask:"+{7} (000) 000-00-00",
-        lazy:false
-    });
-
-}
-
-</script>
-
 
 <script src="scripts/script.js"></script>
 

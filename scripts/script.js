@@ -126,7 +126,7 @@ async function loadBooks() {
     });
 
 }
-
+loadBooks();
 
 
 
@@ -421,3 +421,5 @@ async function orderBook(event){
     }
 
 }
+
+Fancybox.bind("[data-fancybox]", {});
