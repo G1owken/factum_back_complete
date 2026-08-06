@@ -2,16 +2,6 @@
 
 session_start();
 
-if (isset($_SESSION["user_id"])) {
-
-    if ($_SESSION["user_id"] === 1) {
-        header("Location: pages/admin.php");
-    } else {
-        header("Location: pages/catalogue.php");
-    }
-
-    exit;
-}
 ?>
 
 <!DOCTYPE html>
@@ -19,6 +9,7 @@ if (isset($_SESSION["user_id"])) {
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Авторизация</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1/dist/fancybox/fancybox.css">
 </head>
@@ -27,11 +18,7 @@ if (isset($_SESSION["user_id"])) {
 
 <h1>Вход</h1>
 
-<form
-id = "loginForm" 
-action="scripts/authorisation.php" 
-method="post"
->
+<form id="loginForm" action="scripts/authorisation.php" method="post">
 
     <p>Логин</p>
 
@@ -94,21 +81,11 @@ method="post"
 
         <p>Пароль</p>
 
-        <input
-            type="password"
-            name="password"
-            minlength = "10"
-            required
-        >
+        <input type="password" name="password" minlength="10" required>
 
         <p>Введите пароль еще раз</p>
 
-        <input
-            type="password"
-            name="confirm_password"
-            minlength = "10"
-            required
-        >
+        <input type="password" name="confirm_password" minlength="10" required>
 
 
         <br><br>

@@ -8,3 +8,5 @@ INSERT INTO genre (genre_id, genre, open_library_subject) VALUES
     (5, 'Роман', 'romance'),
     (6, 'Классика', 'classics'),
     (7, 'Приключения', 'adventure');
+
+INSERT INTO user ()

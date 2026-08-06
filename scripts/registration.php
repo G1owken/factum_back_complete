@@ -8,12 +8,7 @@ header('Content-Type: application/json; charset=utf-8');
 $pdo = getDbConnection();
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-
-    errorResponse(
-        "Метод запрещён.",
-        405
-    );
-
+    errorResponse("Метод запрещён.", 405);
 }
 
 $user = trim($_POST['username'] ?? "");
@@ -52,28 +47,39 @@ $validationErrors = validatePassword($password);
 if (!empty($validationErrors)) {
     errorResponse(implode(" ", $validationErrors));
 }
+
 if ($password !== $confirmPassword) {
     errorResponse("Пароли не совпадают.");
 }
-$passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
 if (!$user || !$password || !$confirmPassword || !$email) {
     errorResponse("Все поля обязательны для заполнения.");
 }
 
-$sql = "
-insert into user (username, password_hash, email)
-values (?, ?, ?)"
-;
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    errorResponse("Некорректный формат email.");
+}
 
+if (!preg_match('/^[A-Za-z0-9_]+$/', $user)) {
+    errorResponse("Логин может содержать только латинские буквы, цифры и подчеркивания.");
+}
+
+$passwordHash = password_hash($password, PASSWORD_DEFAULT);
+
+$sql = "INSERT INTO user (username, password_hash, email) VALUES (?, ?, ?)";
 $stmt = $pdo->prepare($sql);
+
 try {
     $stmt->execute([$user, $passwordHash, $email]);
 } catch (PDOException $e) {
     if ($e->getCode() === '23000') {
         errorResponse("Пользователь с таким именем или email уже существует.");
-    } else {
-        errorResponse("Ошибка базы данных: " . $e->getMessage(), 500);
     }
+    errorResponse("Ошибка базы данных: " . $e->getMessage(), 500);
 }
 
+http_response_code(201);
+echo json_encode([
+    "success" => true,
+    "message" => "Регистрация прошла успешно."
+]);

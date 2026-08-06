@@ -1,12 +1,40 @@
 <?php
+session_start();
+require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../function/error.php';
 
-require_once __DIR__ . './config/db.php';
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+    errorResponse("Метод запрещён.", 405);
+}
 
-header("Content-Type: application/json; charset=utf-8");
+$username = trim($_POST['username'] ?? '');
+$password = trim($_POST['password'] ?? '');
 
+if ($username === '' || $password === '') {
+    errorResponse("Логин и пароль обязательны.");
+}
 
 $pdo = getDbConnection();
 
-$user_id = $_POST["user_id"] ?? null;
+$stmt = $pdo->prepare("
+    SELECT user_id, password_hash
+    FROM user
+    WHERE username = ?
+    LIMIT 1
+");
+$stmt->execute([$username]);
+$user = $stmt->fetch();
 
-$password = $_POST["password"] ?? null;
+if (!$user || !password_verify($password, $user['password_hash'])) {
+    errorResponse("Неверный логин или пароль.", 401);
+}
+
+$_SESSION['user_id'] = (int)$user['user_id'];
+
+if ($_SESSION['user_id'] === 1) {
+    header("Location: ../pages/admin.php");
+} else {
+    header("Location: ../pages/catalogue.php");
+}
+exit;
+
