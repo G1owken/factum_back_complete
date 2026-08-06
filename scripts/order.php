@@ -1,26 +1,16 @@
 <?php
 
 require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../function/error.php';
+
+$pdo = getDbConnection();
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 header("Content-Type: application/json; charset=utf-8");
 
-
-function errorResponse(mixed $message, $status = 400)
-{
-    http_response_code($status);
-
-    echo json_encode([
-        "success" => false,
-        "message" => $message
-    ]);
-
-    exit;
-}
-
-
+session_start();
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 
@@ -31,6 +21,11 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 
 }
 
+$userId = $_SESSION["user_id"] ?? null;
+
+if (!$userId) {
+    errorResponse("Необходимо авторизоваться.", 401);
+}
 
 
 $bookId = $_POST["book_id"] ?? null;
@@ -42,15 +37,21 @@ $fatherName = trim($_POST["fathername"] ?? "");
 
 
 $phone = trim($_POST["phone"] ?? "");
-$email = trim($_POST["email"] ?? "");
 
 
 $city = trim($_POST["city"] ?? "");
 $postalCode = trim($_POST["postal_code"] ?? "");
 $address = trim($_POST["address"] ?? "");
 
+$sql = "
+select email
+from user
+where user_id = ?
+";
 
-
+$stmt = $pdo->prepare($sql);
+$stmt->execute([$userId]);
+$email = $stmt->fetchColumn();
 
 if (
     !$bookId ||
@@ -130,9 +131,6 @@ if (!$book) {
     );
 
 }
-
-
-
 
 
 try {

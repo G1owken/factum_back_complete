@@ -423,3 +423,46 @@ async function orderBook(event){
 }
 
 Fancybox.bind("[data-fancybox]", {});
+
+
+const registrationForm = document.getElementById("registrationForm");
+
+if(registrationForm) {
+    registrationForm.addEventListener(
+        "submit",
+        registerUser
+    );
+}
+
+async function registerUser(event) {
+    event.preventDefault();
+
+    const button =
+    registrationForm.querySelector("button");
+
+    button.disabled=true;
+
+    try {
+    
+        const formData = new FormData(registrationForm);
+
+        const response = await fetch("scripts/registration.php", {
+            method: "POST",
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if(response.status === 201) {
+            alert(result.message);
+            registrationForm.reset();
+        } else {
+            alert(result.message);
+        }
+    } catch (error) {
+        alert("Ошибка регистрации.");
+        console.error(error);
+    } finally {
+        button.disabled = false;
+    }
+}
