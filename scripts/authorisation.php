@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../function/error.php';
+session_start();
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     errorResponse("Метод запрещён.", 405);
@@ -36,4 +37,6 @@ if ($_SESSION['user_id'] === 1) {
     header("Location: ../pages/catalogue.php");
 }
 exit;
+
+
 

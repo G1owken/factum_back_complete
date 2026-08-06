@@ -9,4 +9,5 @@ INSERT INTO genre (genre_id, genre, open_library_subject) VALUES
     (6, 'Классика', 'classics'),
     (7, 'Приключения', 'adventure');
 
-INSERT INTO user ()
+INSERT IGNORE INTO user (user_id, username, password_hash, email) VALUES
+    (1, 'admin', '$2y$10$f1TwkBqbFCmMyd49MY9NHOLAPjfvO2cXCg2ou9zaciq.PCEmBe.wi', 'admin@example.com');

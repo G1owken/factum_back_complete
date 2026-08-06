@@ -200,3 +200,19 @@ async function registerUser(event) {
         button.disabled = false;
     }
 }
+
+const loginForm = document.getElementById("loginForm");
+
+if (loginForm) {
+    loginForm.addEventListener("submit", () => {
+
+    });
+}
+
+window.addEventListener("pageshow", () => {
+    const loginForm = document.getElementById("loginForm");
+
+    if (loginForm) {
+        loginForm.reset();
+    }
+});
