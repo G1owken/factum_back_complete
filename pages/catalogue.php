@@ -31,7 +31,8 @@ $authors = $stmt->fetchAll();
 
 <body>
     <h1>Каталог книг</h1>
-
+    <a href="profile.php">Профиль</a> | <a href="favourites.php">Избранное</a> | <button id="logoutButton">Выйти</button>
+    <hr>
     <form id="filterForm">
         <label for="genre">Жанр:</label>
         <select id="genre" name="genre">
@@ -66,9 +67,9 @@ $authors = $stmt->fetchAll();
         <button type="submit">Найти</button>
     </form>
 
-    <hr>
 
     <div id="importSection" hidden>
+        <hr>
         <label for="limit">Количество книг:</label>
         <input id="limit" type="number" min="1" max="50" value="10">
         <button id="import" type="button">Импортировать</button>

@@ -35,12 +35,29 @@ async function loadBooks() {
 
     data.forEach(book => {
         books.innerHTML += `
-        <div>
+        <div class="book-card">
             ${book.cover_path ? `<img src="${book.cover_path}" width="150">` : ""}
-            <h2><a href="book.php?id=${book.book_id}">${book.title}</a></h2>
+
+            <h2>
+                <a href="book.php?id=${book.book_id}">
+                    ${book.title}
+                </a>
+            </h2>
+
             <p>Автор: ${book.authors ?? "Нет"}</p>
             <p>Жанр: ${book.genres ?? "Нет"}</p>
             <p>Цена: ${book.price} ₸</p>
+
+            <button
+                class="favourite-btn"
+                data-book-id="${book.book_id}"
+                type="button"
+            >
+                ${Number(book.is_favourite) === 1
+                    ? "В избранном"
+                    : "Добавить в избранное"}
+            </button>
+
             <hr>
         </div>
         `;
@@ -162,7 +179,6 @@ async function orderBook(event) {
     }
 }
 
-Fancybox.bind("[data-fancybox]", {});
 
 const registrationForm = document.getElementById("registrationForm");
 
@@ -215,4 +231,113 @@ window.addEventListener("pageshow", () => {
     if (loginForm) {
         loginForm.reset();
     }
+
+    if (books) {
+        loadBooks();
+    }
 });
+
+document.addEventListener("click", async (event) => {
+    const button = event.target.closest(".favourite-btn");
+
+    if (!button) return;
+
+    button.disabled = true;
+
+    const bookId = button.dataset.bookId;
+
+    try {
+        const response = await fetch("../scripts/save.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams({
+                book_id: bookId
+            })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            alert(result.message);
+            return;
+        }
+
+        if (result.status === "added") {
+            button.textContent = "В избранном";
+
+        } else if (result.status === "removed") {
+
+            if (favouritesContainer) {
+                button.closest(".book-card").remove();
+            } else {
+                button.textContent = "Добавить в избранное";
+            }
+
+        } else {
+            alert(result.message);
+        }
+
+    } catch (error) {
+        alert("Ошибка соединения с сервером.");
+        console.error(error);
+
+    } finally {
+        button.disabled = false;
+    }
+});
+
+const favouritesContainer = document.getElementById("favourites");
+
+async function loadFavourites() {
+    if (!favouritesContainer) return;
+
+    try {
+        const response = await fetch("../scripts/favourite.php");
+        const data = await response.json();
+
+        if (!response.ok) {
+            alert(data.message);
+            return;
+        }
+
+        if (!data.length) {
+            favouritesContainer.innerHTML = "<p>Избранное пусто.</p>";
+            return;
+        }
+
+        favouritesContainer.innerHTML = data.map(book => `
+        <div class="book-card">
+            ${book.cover_path ? `<img src="${book.cover_path}" width="150">` : ""}
+
+            <h2>
+            <a href="book.php?id=${book.book_id}">
+            ${book.title}
+            </a>
+            </h2>
+
+            <p>Автор: ${book.authors ?? "Нет"}</p>
+            <p>Жанр: ${book.genres ?? "Нет"}</p>
+            <p>Год выпуска: ${book.release_year ?? "Нет"}</p>
+            <p>Цена: ${book.price} ₸</p>
+
+            <button
+            class="favourite-btn"
+            data-book-id="${book.book_id}"
+            type="button"
+            >
+            Удалить из избранного
+            </button>
+
+            <hr>
+        </div>
+        `).join("");
+
+    } catch (error) {
+        alert("Ошибка соединения с сервером.");
+        console.error(error);
+    }
+}
+
+loadFavourites();

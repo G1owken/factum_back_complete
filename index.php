@@ -99,6 +99,7 @@ session_start();
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1/dist/fancybox/fancybox.umd.js"></script>
 <script src="scripts/script.js"></script>
+<script> Fancybox.bind("[data-fancybox]", {}); </script>
 </body>
 
 </html>

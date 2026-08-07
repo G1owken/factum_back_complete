@@ -77,10 +77,12 @@ create table user (
     username varchar(100) not null,
     password_hash varchar(255) not null,
     email varchar(150) not null,
+    photo_path varchar(255),
     created_at datetime not null default current_timestamp,
     constraint pk_user_id primary key (user_id),
     constraint uq_username unique (username),
-    constraint uq_user_email unique (email)
+    constraint uq_user_email unique (email),
+    constraint uk_photo_path unique (photo_path)
 );
 
 create table orders (
@@ -109,5 +111,30 @@ create table orders (
     constraint fk_order_book_id foreign key (book_id)
         references book (book_id)
         on delete restrict
+        on update cascade
+);
+
+create table favourites (
+    favourite_id int auto_increment,
+    user_id int not null,
+    book_id int not null,
+    added_at datetime not null default current_timestamp,
+
+    constraint pk_favourite_id
+        primary key (favourite_id),
+
+    constraint uq_favourite_user_book
+        unique (user_id, book_id),
+
+    constraint fk_favourite_user_id
+        foreign key (user_id)
+        references user (user_id)
+        on delete cascade
+        on update cascade,
+
+    constraint fk_favourite_book_id
+        foreign key (book_id)
+        references book (book_id)
+        on delete cascade
         on update cascade
 );
