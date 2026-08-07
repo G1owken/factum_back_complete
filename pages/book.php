@@ -67,7 +67,7 @@ if (!$book) {
     <?php if ($book["stock"] > 0): ?>
         <a data-fancybox data-src="#hidden-form" href="#hidden-form">Сделать заказ</a>
         <div style="display:none" id="hidden-form">
-            <form id="orderForm" action="../scripts/order.php" method="POST">
+            <form id="orderForm">
                 <h2>Сделайте заказ</h2>
                 <input type="hidden" name="book_id" value="<?= $id ?>">
                 <p>Имя</p>
@@ -75,7 +75,7 @@ if (!$book) {
                 <p>Фамилия</p>
                 <input type="text" name="surname" required>
                 <p>Отчество</p>
-                <input type="text" name="fathername" required>
+                <input type="text" name="fathername">
                 <p>Телефон</p>
                 <input type="tel" id="phone" name="phone" placeholder="+7 (___) ___-__-__" required>
                 <p>Город</p>

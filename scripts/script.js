@@ -142,40 +142,48 @@ if (phoneInput) {
     });
 }
 
-const orderForm = document.getElementById("orderForm");
+const orderForm=document.getElementById("orderForm");
 
-if (orderForm) {
-    orderForm.addEventListener("submit", orderBook);
+if(orderForm){
+    orderForm.addEventListener("submit",orderBook);
 }
 
-async function orderBook(event) {
+async function orderBook(event){
     event.preventDefault();
 
-    const button = orderForm.querySelector("button");
-    button.disabled = true;
+    const button=orderForm.querySelector("button");
+    button.disabled=true;
 
-    try {
-        const formData = new FormData(orderForm);
+    try{
+        const formData=new FormData(orderForm);
 
-        const response = await fetch("../scripts/order.php", {
-            method: "POST",
-            body: formData
+        const response=await fetch("../scripts/order.php",{
+            method:"POST",
+            body:formData
         });
 
-        const result = await response.json();
+        let result;
 
-        if (response.status === 201) {
+        try{
+            result=await response.json();
+        }catch(error){
+            console.error(error);
+            alert("Сервер вернул неверный ответ.");
+            return;
+        }
+
+        if(response.status===201){
             alert(`Уважаемый ${result.firstname}, ваш заказ успешно оформлен.`);
             orderForm.reset();
-        } else {
+        }else{
             alert(result.message);
         }
 
-    } catch (error) {
+    }catch(error){
         alert("Ошибка соединения с сервером.");
         console.error(error);
-    } finally {
-        button.disabled = false;
+    }finally{
+        button.disabled=false;
     }
 }
 

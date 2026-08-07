@@ -94,7 +94,7 @@ create table orders (
     firstname varchar(100) not null,
     surname varchar(100) not null,
     fathername varchar(100),
-
+    email varchar(150) not null,
     phone varchar(30) not null,
 
     city varchar(100) not null,
