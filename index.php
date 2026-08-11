@@ -9,7 +9,7 @@ session_start();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Авторизация</title>
+    <title>Магазин книг</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1/dist/fancybox/fancybox.css">
 </head>
 
@@ -17,7 +17,7 @@ session_start();
 
 <h1>Вход</h1>
 
-<form id="loginForm" action="scripts/authorisation.php" method="post">
+<form id="loginForm">
 
     <p>Логин</p>
 
@@ -54,8 +54,6 @@ session_start();
 
     <form
         id="registrationForm"
-        action="scripts/registration.php"
-        method="POST"
     >
 
         <h2>

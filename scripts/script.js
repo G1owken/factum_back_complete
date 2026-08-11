@@ -228,9 +228,42 @@ async function registerUser(event) {
 const loginForm = document.getElementById("loginForm");
 
 if (loginForm) {
-    loginForm.addEventListener("submit", () => {
+    loginForm.addEventListener("submit", loginUser);
+}
 
-    });
+async function loginUser(event) {
+    event.preventDefault();
+
+    const button = loginForm.querySelector("button");
+    button.disabled = true;
+
+    try {
+        const formData = new FormData(loginForm);
+
+        const response = await fetch("./scripts/authorisation.php", {
+            method: "POST",
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            alert(result.message || "Ошибка авторизации.");
+            return;
+        }
+
+        if (result.success) {
+            window.location.href = result.redirect;
+        } else {
+            alert(result.message || "Неверный логин или пароль.");
+        }
+
+    } catch (error) {
+        console.error(error);
+        alert("Ошибка соединения с сервером.");
+    } finally {
+        button.disabled = false;
+    }
 }
 
 window.addEventListener("pageshow", () => {
@@ -349,3 +382,42 @@ async function loadFavourites() {
 }
 
 loadFavourites();
+
+
+const editForm = document.getElementById("editForm");
+
+if (editForm) {
+    editForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const button = editForm.querySelector("button[type='submit']");
+        button.disabled = true;
+
+        const formData = new FormData(editForm);
+
+        try {
+            const response = await fetch("../scripts/update.php", {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+                alert(result.message || "Ошибка при изменении данных.");
+                return;
+            }
+
+            alert(result.message || "Данные успешно изменены.");
+
+            location.reload();
+
+        } catch (error) {
+            console.error(error);
+            alert("Ошибка соединения с сервером.");
+
+        } finally {
+            button.disabled = false;
+        }
+    });
+}

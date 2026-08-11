@@ -25,17 +25,18 @@ $stmt = $pdo->prepare("
 $stmt->execute([$username]);
 $user = $stmt->fetch();
 
-if (!$user || !password_verify($password, $user['password_hash'])) {
-    errorResponse("Неверный логин или пароль.", 401);
-}
-
-$_SESSION['user_id'] = (int)$user['user_id'];
-
 if ($_SESSION['user_id'] === 1) {
-    header("Location: ../pages/admin.php");
+    echo json_encode([
+        'success' => true,
+        'redirect' => 'pages/admin.php'
+    ]);
 } else {
-    header("Location: ../pages/catalogue.php");
+    echo json_encode([
+        'success' => true,
+        'redirect' => 'pages/catalogue.php'
+    ]);
 }
+
 exit;
 
 
