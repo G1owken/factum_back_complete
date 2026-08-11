@@ -48,7 +48,7 @@ $user = $stmt->fetch();
     <?php else: ?>
 
         <img
-            src="../uploads/empty_icon.png"
+            src="../uploads/empty.png"
             alt="Аватар"
             width="150"
             height="150"
