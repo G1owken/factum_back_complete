@@ -31,7 +31,7 @@ $authors = $stmt->fetchAll();
 
 <body>
     <h1>Каталог книг</h1>
-    <a href="profile.php">Профиль</a> | <a href="favourites.php">Избранное</a> | <button id="logoutButton">Выйти</button>
+    <a href="profile.php">Профиль</a> | <a href="favourites.php">Избранное</a> | <a href="../scripts/logout.php">Выйти</a>
     <hr>
     <form id="filterForm">
         <label for="genre">Жанр:</label>

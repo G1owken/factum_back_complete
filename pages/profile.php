@@ -28,7 +28,7 @@ $user = $stmt->fetch();
 </head>
 <body>
     <h1>Личный кабинет</h1>
-    <a href="catalogue.php">Каталог</a> | <a href="favourites.php">Избранные</a> | <button id="logoutButton">Выйти</button>
+    <a href="catalogue.php">Каталог</a> | <a href="favourites.php">Избранные</a> | <a href="../scripts/logout.php">Выйти</a>
     <hr>
     <?php if (!empty($user['photo_path'])): ?>
 

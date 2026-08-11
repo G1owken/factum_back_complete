@@ -15,7 +15,7 @@ $pdo = getDbConnection();
 </head>
 <body>
     <h1>Избранные книги</h1>
-    <a href="catalogue.php">Каталог</a> | <a href="profile.php">Профиль</a> | <button id="logoutButton">Выйти</button>
+    <a href="catalogue.php">Каталог</a> | <a href="profile.php">Профиль</a> | <a href="../scripts/logout.php">Выйти</a>
     <hr>
     <div id="favourites"></div>
     <script src="/../scripts/script.js"></script>
