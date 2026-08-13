@@ -4,6 +4,14 @@ require_once __DIR__ . '/../config/db.php';
 
 $pdo = getDbConnection();
 
+$user_id = $_SESSION['user_id'];
+
+$stmt = $pdo->prepare('
+select photo_path from user
+where user_id = ?');
+$stmt->execute([$user_id]);
+$user = $stmt->fetch();
+
 ?>
 
 <!DOCTYPE html>
@@ -15,7 +23,21 @@ $pdo = getDbConnection();
 </head>
 <body>
     <h1>Избранные книги</h1>
-    <a href="catalogue.php">Каталог</a> | <a href="profile.php">Профиль</a> | <a href="../scripts/logout.php">Выйти</a>
+    <?php
+        $logoPath = 'uploads/logo_' . basename($user['photo_path']);
+    ?>
+
+    <img
+        src="../<?= htmlspecialchars($logoPath) ?>"
+        alt="Аватар"
+        width="50"
+        height="50"
+        id="profileAvatar"
+        style="object-fit: cover;
+        border-radius: 50%;
+        border: 2px solid #000;"
+    >
+    <a href="catalogue.php">Каталог</a> | <a href="profile.php">Профиль</a> | <a href="../scripts/logout.php">Выйти из аккаунта</a>
     <hr>
     <div id="favourites"></div>
     <script src="/../scripts/script.js"></script>

@@ -2,12 +2,14 @@
 
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../config/session.php';
+require_once __DIR__ . '/../function/uploader.php';
 
 $pdo = getDbConnection();
 
 $stmt = $pdo->query("
     SELECT genre_id, genre
     FROM genre
+    WHERE is_active = 1
     ORDER BY genre
 ");
 $genres = $stmt->fetchAll();
@@ -18,6 +20,14 @@ $stmt = $pdo->query("
     ORDER BY author
 ");
 $authors = $stmt->fetchAll();
+
+$user_id = $_SESSION['user_id'];
+
+$stmt = $pdo->prepare('
+select photo_path from user
+where user_id = ?');
+$stmt->execute([$user_id]);
+$user = $stmt->fetch();
 ?>
 
 <!DOCTYPE html>
@@ -31,7 +41,21 @@ $authors = $stmt->fetchAll();
 
 <body>
     <h1>Каталог книг</h1>
-    <a href="profile.php">Профиль</a> | <a href="favourites.php">Избранное</a> | <a href="../scripts/logout.php">Выйти</a>
+    <?php
+        $logoPath = 'uploads/logo_' . basename($user['photo_path']);
+    ?>
+
+    <img
+        src="../<?= htmlspecialchars($logoPath) ?>"
+        alt="Аватар"
+        width="50"
+        height="50"
+        id="profileAvatar"
+        style="object-fit: cover;
+        border-radius: 50%;
+        border: 2px solid #000;"
+    >
+    <a href="profile.php">Профиль</a> | <a href="favourites.php">Избранное</a> | <a href="../scripts/logout.php">Выйти из аккаунта</a>
     <hr>
     <form id="filterForm">
         <label for="genre">Жанр:</label>

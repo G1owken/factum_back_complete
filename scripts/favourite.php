@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/session.php';
 require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../function/error.php';
 $pdo = getDbConnection();
 
 $userId = $_SESSION['user_id'] ?? null;
@@ -8,13 +9,7 @@ $userId = $_SESSION['user_id'] ?? null;
 header("Content-Type: application/json; charset=utf-8");
 
 if (!$userId) {
-    http_response_code(401);
-
-    echo json_encode([
-        "success" => false,
-        "message" => "Необходимо авторизоваться."
-    ], JSON_UNESCAPED_UNICODE);
-
+    errorResponse('Необходимо авторизоваться.', 401);
     exit;
 }
 
@@ -48,7 +43,7 @@ left join author a
     on ba.author_id = a.author_id
 left join stock s
     on b.book_id = s.book_id
-where f.user_id = ?
+where f.user_id = ? and b.exist = 1
 group by 
     b.book_id,
     f.added_at

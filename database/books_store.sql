@@ -12,6 +12,7 @@ create table book (
     open_library_key varchar(100) not null,
     price decimal(10,2) not null default 0,
     description text not null,
+    exist boolean,
     constraint pk_book_id primary key (book_id),
     constraint uq_open_library_key unique (open_library_key)
 );
@@ -20,6 +21,7 @@ create table genre (
     genre_id int auto_increment,
     genre varchar(200) not null,
     open_library_subject varchar(200) not null,
+    is_active boolean,
     constraint pk_genre_id primary key (genre_id),
     constraint uq_genre unique (genre),
     constraint uq_open_library_subject unique (open_library_subject)
@@ -78,6 +80,7 @@ create table user (
     password_hash varchar(255) not null,
     email varchar(150) not null,
     photo_path varchar(255),
+    is_set boolean,
     created_at datetime not null default current_timestamp,
     constraint pk_user_id primary key (user_id),
     constraint uq_username unique (username),
