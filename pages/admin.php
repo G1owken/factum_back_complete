@@ -2,6 +2,8 @@
 require_once __DIR__ . '/../config/session.php';
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../function/uploader.php';
+require_once __DIR__ . '/../function/validatePassword.php';
+require_once __DIR__ . '/../function/error.php';
 
 $pdo = getDbConnection();
 $currentUserId = (int)($_SESSION['user_id'] ?? 0);
@@ -149,9 +151,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 $fields = ['username = ?', 'email = ?'];
-                $params = [$username, $email, $userId];
+                $params = [$username, $email];
 
                 if ($password !== '') {
+                    $passwordErrors = validatePassword($password);
+                    if ($passwordErrors !== []) {
+                        throw new InvalidArgumentException(implode(' ', $passwordErrors));
+                    }
                     $fields[] = 'password_hash = ?';
                     $params[] = password_hash($password, PASSWORD_DEFAULT);
                 }
@@ -167,6 +173,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 if ($password === '') {
                     throw new InvalidArgumentException('Password is required for a new user.');
+                }
+
+                $passwordErrors = validatePassword($password);
+                if ($passwordErrors !== []) {
+                    throw new InvalidArgumentException(implode(' ', $passwordErrors));
                 }
 
                 $photoPath = null;
@@ -203,6 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } catch (Throwable $e) {
         $message = $e->getMessage();
         $messageType = 'error';
+        errorResponse($message, 400);
     }
 }
 
@@ -217,22 +229,7 @@ $books = $pdo->query('SELECT * FROM book ORDER BY title')->fetchAll();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Админ панель</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 24px; line-height: 1.5; }
-        h1, h2 { margin-bottom: 12px; }
-        table { border-collapse: collapse; width: 100%; margin-bottom: 32px; }
-        th, td { border: 1px solid #ccc; padding: 8px 10px; vertical-align: top; }
-        th { background: #f3f3f3; text-align: left; }
-        form { display: inline-block; margin: 8px 0; }
-        input, textarea, select, button { padding: 8px; margin: 4px 0; }
-        textarea { width: 280px; min-height: 90px; }
-        .status-success { color: green; }
-        .status-error { color: red; }
-        .inline-form { display: flex; flex-wrap: wrap; gap: 6px; }
-        .danger { background: #ffe1e1; }
-        .nav { margin-bottom: 20px; }
-        .section { margin-top: 40px; }
-    </style>
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
     <div class="nav">
@@ -310,7 +307,7 @@ $books = $pdo->query('SELECT * FROM book ORDER BY title')->fetchAll();
             <input type="hidden" name="user_id" value="">
             <input type="text" name="username" placeholder="Username" required>
             <input type="email" name="email" placeholder="Email" required>
-            <input type="password" name="password" placeholder="Password">
+            <input type="password" name="password" placeholder="Password" required>
             <input type="file" name="photo" accept="image/jpeg,image/png,image/webp">
             <button type="submit">Добавить пользователя</button>
         </form>
@@ -338,6 +335,8 @@ $books = $pdo->query('SELECT * FROM book ORDER BY title')->fetchAll();
                         </td>
                         <td>
                                 <input type="email" name="email" value="<?= htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8'); ?>" required>
+                                <br>
+                                <input type="password" name="password" placeholder="Новый пароль">
                         </td>
                         <td>
                                 <?php if (!empty($user['photo_path'])): ?>

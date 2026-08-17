@@ -1,0 +1,82 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 24px;
+    line-height: 1.5;
+}
+
+h1,
+h2 {
+    margin-bottom: 12px;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 32px;
+}
+
+th,
+td {
+    border: 1px solid #ccc;
+    padding: 8px 10px;
+    vertical-align: top;
+}
+
+th {
+    background: #f3f3f3;
+    text-align: left;
+}
+
+form {
+    display: inline-block;
+    margin: 8px 0;
+}
+
+input,
+textarea,
+select,
+button {
+    padding: 8px;
+    margin: 4px 0;
+}
+
+textarea {
+    width: 280px;
+    min-height: 90px;
+}
+
+.status-success {
+    color: green;
+}
+
+.status-error {
+    color: red;
+}
+
+.inline-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.danger {
+    background: #ffe1e1;
+}
+
+.nav {
+    margin-bottom: 20px;
+}
+
+.section {
+    margin-top: 40px;
+}
+
+#profileAvatar {
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #000;
+}
+
+#edit-form {
+    display: none;
+}

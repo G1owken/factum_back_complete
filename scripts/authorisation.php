@@ -21,7 +21,7 @@ $pdo = getDbConnection();
 $stmt = $pdo->prepare("
     SELECT user_id, password_hash
     FROM user
-    WHERE username = ?
+    WHERE username = ? and is_set = 1
     LIMIT 1
 ");
 

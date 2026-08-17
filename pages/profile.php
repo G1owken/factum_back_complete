@@ -23,7 +23,8 @@ $user = $stmt->fetch();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1/dist/fancybox/fancybox.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1/dist/fancybox/fancybox.css">
+    <link rel="stylesheet" href="../style.css">
     <title>Profile</title>
 </head>
 <body>
@@ -42,7 +43,6 @@ $user = $stmt->fetch();
             width="150"
             height="150"
             id="profileAvatar"
-            style="object-fit: cover;"
         >
 
     <?php else: ?>
@@ -53,7 +53,6 @@ $user = $stmt->fetch();
             width="150"
             height="150"
             id="profileAvatar"
-            style="object-fit: cover;"
         >
 
     <?php endif; ?>
@@ -68,7 +67,7 @@ $user = $stmt->fetch();
     <br>
     <hr>
     <a data-fancybox data-src="#edit-form" href="#edit-form">Изменить</a>
-    <div style="display: none;" id="edit-form">
+    <div id="edit-form">
         <form id = "editForm">
             <h2>Редактировать личные данные</h2>
             <label>Аватар</label>

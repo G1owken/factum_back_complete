@@ -37,6 +37,7 @@ $user = $stmt->fetch();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Books store</title>
+    <link rel="stylesheet" href="../style.css">
 </head>
 
 <body>
@@ -51,9 +52,6 @@ $user = $stmt->fetch();
         width="50"
         height="50"
         id="profileAvatar"
-        style="object-fit: cover;
-        border-radius: 50%;
-        border: 2px solid #000;"
     >
     <a href="profile.php">Профиль</a> | <a href="favourites.php">Избранное</a> | <a href="../scripts/logout.php">Выйти из аккаунта</a>
     <hr>
