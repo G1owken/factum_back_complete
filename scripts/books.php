@@ -12,6 +12,9 @@ $title = $_GET["title"] ?? "";
 $author = $_GET["author"] ?? "";
 $sortField = $_GET["sortField"] ?? "title";
 $sortDirection = $_GET["sortDirection"] ?? "ASC";
+$page = max(1, (int)($_GET["page"] ?? 1));
+$perPage = 10;
+$offset = ($page - 1) * $perPage;
 
 $fields = [
     "title" => "b.title",
@@ -76,7 +79,7 @@ LEFT JOIN stock s
     ON b.book_id = s.book_id
 ";
 
-$where = [];
+$where = ["s.amount > 0"];
 $params = [$userId];
 
 if ($genre !== "") {
@@ -112,19 +115,42 @@ if ($where) {
     $sql .= " WHERE " . implode(" AND ", $where);
 }
 
-$sql .= "
-GROUP BY
-    b.book_id
-ORDER BY
-    {$fields[$sortField]} $sortDirection
+$countSql = "
+    SELECT COUNT(DISTINCT b.book_id)
+    FROM book b
+    LEFT JOIN stock s
+        ON b.book_id = s.book_id
 ";
 
-$stmt = $pdo->prepare($sql);
-$stmt->execute($params);
+if ($where) {
+    $countSql .= " WHERE " . implode(" AND ", $where);
+}
 
-header("Content-Type: application/json; charset=utf-8");
+$countParams = array_slice($params, 1);
 
-echo json_encode(
-    $stmt->fetchAll(),
-    JSON_UNESCAPED_UNICODE
-);
+$countStmt = $pdo->prepare($countSql);
+$countStmt->execute($countParams);
+
+$totalBooks = (int)$countStmt->fetchColumn();
+$totalPages = max(1, (int)ceil($totalBooks / $perPage));
+
+$sql .= " 
+GROUP BY 
+    b.book_id 
+ORDER BY 
+    {$fields[$sortField]} $sortDirection 
+LIMIT $perPage OFFSET $offset 
+"; 
+ 
+$stmt = $pdo->prepare($sql); 
+$stmt->execute($params); 
+ 
+$books = $stmt->fetchAll();
+
+header("Content-Type: application/json; charset=utf-8"); 
+ 
+echo json_encode([
+    "books" => $books,
+    "totalPages" => $totalPages,
+    "currentPage" => $page
+], JSON_UNESCAPED_UNICODE);

@@ -102,6 +102,7 @@ $user = $stmt->fetch();
     <hr>
 
     <div id="books"></div>
+    <div id = "pagination"></div>
 
     <script src="../scripts/script.js"></script>
 </body>

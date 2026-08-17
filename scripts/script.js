@@ -5,10 +5,13 @@ const title = document.getElementById("title");
 const sortField = document.getElementById("sortField");
 const sortDirection = document.getElementById("sortDirection");
 const books = document.getElementById("books");
+const pagination = document.getElementById("pagination");
 const importSection = document.getElementById("importSection");
 const importButton = document.getElementById("import");
 const limit = document.getElementById("limit");
+
 let importOffset = 0;
+let currentPage = 1;
 
 if (importSection) importSection.hidden = true;
 
@@ -20,48 +23,93 @@ async function loadBooks() {
         author: author.value,
         title: title.value,
         sortField: sortField.value,
-        sortDirection: sortDirection.value
+        sortDirection: sortDirection.value,
+        page: currentPage
     });
 
-    const response = await fetch("../scripts/books.php?" + params);
-    const data = await response.json();
+    try {
+        const response = await fetch("../scripts/books.php?" + params);
+        const data = await response.json();
 
-    books.innerHTML = "";
+        books.innerHTML = "";
 
-    if (!data.length) {
-        books.innerHTML = "<p>Книги не найдены</p>";
-        return;
+        if (!data.books.length) {
+            books.innerHTML = "<p>Книги не найдены</p>";
+
+            if (pagination) {
+                pagination.innerHTML = "";
+            }
+
+            return;
+        }
+
+        data.books.forEach(book => {
+            books.innerHTML += `
+            <div class="book-card">
+                ${book.cover_path ? `<img src="${book.cover_path}" width="150">` : ""}
+
+                <h2>
+                    <a href="book.php?id=${book.book_id}">
+                        ${book.title}
+                    </a>
+                </h2>
+
+                <p>Автор: ${book.authors ?? "Нет"}</p>
+                <p>Жанр: ${book.genres ?? "Нет"}</p>
+                <p>Цена: ${book.price} ₸</p>
+
+                <button
+                    class="favourite-btn"
+                    data-book-id="${book.book_id}"
+                    type="button"
+                >
+                    ${Number(book.is_favourite) === 1
+                        ? "В избранном"
+                        : "Добавить в избранное"}
+                </button>
+
+                <hr>
+            </div>
+            `;
+        });
+
+        renderPagination(data.totalPages);
+
+    } catch (error) {
+        console.error(error);
+        books.innerHTML = "<p>Ошибка загрузки книг.</p>";
     }
+}
 
-    data.forEach(book => {
-        books.innerHTML += `
-        <div class="book-card">
-            ${book.cover_path ? `<img src="${book.cover_path}" width="150">` : ""}
+function renderPagination(totalPages) {
+    if (!pagination) return;
 
-            <h2>
-                <a href="book.php?id=${book.book_id}">
-                    ${book.title}
-                </a>
-            </h2>
+    pagination.innerHTML = "";
 
-            <p>Автор: ${book.authors ?? "Нет"}</p>
-            <p>Жанр: ${book.genres ?? "Нет"}</p>
-            <p>Цена: ${book.price} ₸</p>
+    if (totalPages <= 1) return;
 
-            <button
-                class="favourite-btn"
-                data-book-id="${book.book_id}"
-                type="button"
-            >
-                ${Number(book.is_favourite) === 1
-                    ? "В избранном"
-                    : "Добавить в избранное"}
-            </button>
+    for (let page = 1; page <= totalPages; page++) {
+        const button = document.createElement("button");
 
-            <hr>
-        </div>
-        `;
-    });
+        button.type = "button";
+        button.textContent = page;
+
+        if (page === currentPage) {
+            button.disabled = true;
+        }
+
+        button.addEventListener("click", () => {
+            currentPage = page;
+            loadBooks();
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        });
+
+        pagination.appendChild(button);
+    }
 }
 
 loadBooks();
@@ -69,6 +117,9 @@ loadBooks();
 if (form) {
     form.addEventListener("submit", e => {
         e.preventDefault();
+
+        currentPage = 1;
+
         loadBooks();
 
         if (importSection && genre.value !== "") {
@@ -77,13 +128,38 @@ if (form) {
     });
 }
 
-if (sortField) sortField.addEventListener("change", loadBooks);
-if (sortDirection) sortDirection.addEventListener("change", loadBooks);
+if (sortField) {
+    sortField.addEventListener("change", () => {
+        currentPage = 1;
+        loadBooks();
+    });
+}
+
+if (sortDirection) {
+    sortDirection.addEventListener("change", () => {
+        currentPage = 1;
+        loadBooks();
+    });
+}
 
 if (genre) {
     genre.addEventListener("change", () => {
         importOffset = 0;
+        currentPage = 1;
         loadBooks();
+    });
+}
+
+if (author) {
+    author.addEventListener("change", () => {
+        currentPage = 1;
+        loadBooks();
+    });
+}
+
+if (title) {
+    title.addEventListener("input", () => {
+        currentPage = 1;
     });
 }
 
@@ -118,6 +194,7 @@ async function importBooks() {
 
         if (result.success) {
             importOffset += Number(limit.value);
+            currentPage = 1;
             loadBooks();
         }
 
@@ -142,51 +219,50 @@ if (phoneInput) {
     });
 }
 
-const orderForm=document.getElementById("orderForm");
+const orderForm = document.getElementById("orderForm");
 
-if(orderForm){
-    orderForm.addEventListener("submit",orderBook);
+if (orderForm) {
+    orderForm.addEventListener("submit", orderBook);
 }
 
-async function orderBook(event){
+async function orderBook(event) {
     event.preventDefault();
 
-    const button=orderForm.querySelector("button");
-    button.disabled=true;
+    const button = orderForm.querySelector("button");
+    button.disabled = true;
 
-    try{
-        const formData=new FormData(orderForm);
+    try {
+        const formData = new FormData(orderForm);
 
-        const response=await fetch("../scripts/order.php",{
-            method:"POST",
-            body:formData
+        const response = await fetch("../scripts/order.php", {
+            method: "POST",
+            body: formData
         });
 
         let result;
 
-        try{
-            result=await response.json();
-        }catch(error){
+        try {
+            result = await response.json();
+        } catch (error) {
             console.error(error);
             alert("Сервер вернул неверный ответ.");
             return;
         }
 
-        if(response.status===201){
+        if (response.status === 201) {
             alert(`Уважаемый ${result.firstname}, ваш заказ успешно оформлен.`);
             orderForm.reset();
-        }else{
+        } else {
             alert(result.message);
         }
 
-    }catch(error){
+    } catch (error) {
         alert("Ошибка соединения с сервером.");
         console.error(error);
-    }finally{
-        button.disabled=false;
+    } finally {
+        button.disabled = false;
     }
 }
-
 
 const registrationForm = document.getElementById("registrationForm");
 
@@ -382,7 +458,6 @@ async function loadFavourites() {
 }
 
 loadFavourites();
-
 
 const editForm = document.getElementById("editForm");
 

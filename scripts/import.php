@@ -20,8 +20,8 @@ function generateDescription(string $title, string $author): string
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data, JSON_UNESCAPED_UNICODE));
     curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 180);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 60);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 600);
 
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -55,8 +55,8 @@ $url = "https://openlibrary.org/subjects/{$subject}.json?limit={$limit}&offset={
 $ch = curl_init($url);
 
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 60);
+curl_setopt($ch, CURLOPT_TIMEOUT, 60);
 curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 curl_setopt($ch, CURLOPT_USERAGENT, "BooksStore/1.0");
@@ -125,7 +125,7 @@ try {
             }
 
             $price = random_int(5000, 20000);
-            $stmt = $pdo->prepare("INSERT INTO book (title, release_year, cover_path, open_library_key, price, description) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt = $pdo->prepare("INSERT INTO book (title, release_year, cover_path, open_library_key, price, description, exist) VALUES (?, ?, ?, ?, ?, ?, ?)");
             $stmt->execute([
                 $title,
                 $releaseYear,
@@ -133,6 +133,7 @@ try {
                 $openLibraryKey,
                 $price,
                 $description,
+                1
             ]);
 
             $bookId = $pdo->lastInsertId();
