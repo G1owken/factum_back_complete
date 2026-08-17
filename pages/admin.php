@@ -342,7 +342,7 @@ $books = $pdo->query('SELECT * FROM book ORDER BY title')->fetchAll();
                                 <?php if (!empty($user['photo_path'])): ?>
                                     <img src="../<?= htmlspecialchars($user['photo_path'], ENT_QUOTES, 'UTF-8'); ?>" alt="user avatar" width="50" height="50" style="object-fit: cover; border-radius: 50%;">
                                 <?php else: ?>
-                                    <span>Отсутствует аватар</span>
+                                    <p>Отсутствует аватар</p>
                                 <?php endif; ?><br>
                                 <input type="file" name="photo" accept="image/jpeg,image/png,image/webp">
                         </td>
