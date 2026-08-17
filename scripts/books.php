@@ -79,7 +79,7 @@ LEFT JOIN stock s
     ON b.book_id = s.book_id
 ";
 
-$where = ["s.amount > 0"];
+$where = ["s.amount > 0", "b.exist = 1"];
 $params = [$userId];
 
 if ($genre !== "") {
