@@ -1,128 +1,91 @@
 # Books Store PHP Project
 
-A simple PHP-based bookstore catalog with book browsing, detail pages, order placement, and Open Library import functionality. The project uses a MySQL database, PHP scripts for the backend, and vanilla JavaScript for the frontend interactions.
+A PHP-based bookstore with catalog browsing, favourites, profile management, admin controls, and order flow.
 
 ## Features
 
-- Browse books by genre, author, title, and sort order
-- View detailed information about a selected book
-- Place customer orders with validation
-- Reduce stock after an order is successfully created
-- Send a confirmation email to the customer
-- Save order details to a local text log in the orders folder
-- Import books from Open Library by genre
-- Generate short book descriptions using an Ollama local model
+- User registration and login
+- Book catalogue with filters and sorting
+- Book detail view
+- Favourites management
+- User profile and avatar upload
+- Admin panel for managing:
+  - genres
+  - users
+  - books
+  - enable/disable toggles
+  - user deletion with related avatar cleanup
+- Order processing and local order logging
+- Open Library import support
 
-## Tech Stack
+## Stack
 
-- PHP
+- PHP 8+
 - MySQL / MariaDB
 - Composer
 - Vanilla JavaScript
 - PHPMailer
 - vlucas/phpdotenv
-- Open Library API
-- Ollama for AI-generated descriptions
+- Intervention Image for avatar resizing
 
-## Project Structure
+## Project structure
 
-- index.php - main catalog page
-- book.php - book detail page and order form
-- config/ - database and environment configuration
-- scripts/ - backend handlers for books, import, and orders
-- database/ - SQL schema and seed data
-- orders/ - order log output
-- vendor/ - Composer dependencies
+- index.php — entry point
+- pages/ — catalog, profile, favourites, admin pages
+- scripts/ — backend handlers for auth, books, profile updates, import, logout
+- config/ — DB and session configuration
+- function/ — validation, uploads, error helpers, SQL update helpers
+- database/ — SQL schema and seed data
+- uploads/ — generated images and avatars
+- orders/ — order log output
+- vendor/ — Composer dependencies
 
 ## Requirements
-
-Before running the project, make sure you have:
 
 - PHP 8+
 - Composer
 - MySQL or MariaDB
-- An Ollama server running locally on http://localhost:11434
-- The model llama3.2 available in Ollama
+- Working database credentials in config/env.php or .env
 
 ## Setup
 
-1. Clone or open the project folder.
-2. Install PHP dependencies:
+1. Install dependencies:
 
 ```bash
 composer install
 ```
 
-3. Create the database and import the schema:
+2. Import the database schema and seed data:
 
 ```bash
 mysql -u root -p < database/books_store.sql
 mysql -u root -p < database/seed_data.sql
 ```
 
-4. Update the environment variables in .env if needed:
+3. Configure environment variables in the project config or .env file.
 
-```env
-DB_HOST=localhost
-DB_PORT=3306
-DB_NAME=books_store
-DB_USER=root
-DB_PASS=your_password
-DB_CHARSET=utf8mb4
-```
-
-5. Make sure Ollama is installed and running, and that the llama3.2 model is available.
-
-## Running the Application
-
-Start a local PHP server from the project root:
+4. Start the project locally:
 
 ```bash
 php -S localhost:8000
 ```
 
-Then open:
+5. Open in browser:
 
 ```text
 http://localhost:8000/index.php
 ```
 
-## How It Works
+## Admin access
 
-### Catalog Page
-The main page loads books from the database and lets users filter and sort the catalog.
-
-### Book Detail Page
-Each book has a detail page with:
-- title
-- author(s)
-- genre(s)
-- release year
-- price
-- stock status
-- description
-- order form
-
-### Order Handling
-When a customer submits an order:
-- the order is saved in the database
-- one unit of stock is decremented
-- an email is attempted to be sent
-- a copy of the order is written to orders/order.txt
-
-### Importing Books
-The import feature uses the selected genre and calls the Open Library API to fetch books. For each imported book, the app:
-- creates or reuses the author
-- inserts the book into the database
-- stores genre relations
-- generates a short description using Ollama
+The first user in the system is treated as the administrator and is redirected to the admin page.
+Password for precreated admin in seed data is: admin_user1&
 
 ## Notes
 
-- The import feature requires a working Ollama installation.
-- If email sending fails, the order is still logged locally in the orders folder.
-- The user interface is currently in Russian.
+- User deletion removes linked favourites and orders, and deletes avatar-related files from uploads.
+- The admin page is intentionally simple and script-based for quick management tasks.
 
 ## License
 
-This project is for educational/demo purposes.
+Educational/demo project.
